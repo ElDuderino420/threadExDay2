@@ -1,5 +1,5 @@
-package ex2;
+package fibonacciobserver;
 
 public interface FibonacciObserver {
-    void dataReady(long tal);
+    void dataReady(long in, long tal);
 }

@@ -1,25 +1,27 @@
 package deadlock;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
 /**
  * @author Lars Mortensen
  */
-class DeadLockDetector implements Runnable {
+class DeadLockDetector extends Thread {
 
-  ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
-  boolean doRun = true;
-  
-  public void stop() {
-    this.doRun = false;
-  }
-  
-  @Override
-  public void run() {
-    while (doRun) {
-      long[] threadIds = tmxb.findDeadlockedThreads();
-      //...
+    ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
+
+    @Override
+    public void run() {
+        while (true) {
+            long[] threadIds = tmxb.findDeadlockedThreads();
+            if (threadIds != null) {
+                ThreadInfo[] infos = tmxb.getThreadInfo(threadIds, true, true);
+                System.out.println("The following threads are deadlocked:");
+                for (ThreadInfo ti : infos) {
+                    System.out.println(ti);
+                }
+            }
+        }
     }
-  }
 }
